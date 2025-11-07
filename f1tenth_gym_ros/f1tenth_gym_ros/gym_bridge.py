@@ -37,10 +37,16 @@ from tf2_ros import TransformBroadcaster
 import gym
 import numpy as np
 from transforms3d import euler
+import os
+from ament_index_python.packages import get_package_share_directory
 
 class GymBridge(Node):
     def __init__(self):
         super().__init__('gym_bridge')
+
+        # Get the package share directory dynamically
+        package_share_dir = get_package_share_directory('f1tenth_gym_ros')
+        default_map_path = os.path.join(package_share_dir, 'maps', 'levine')
 
         self.declare_parameter('ego_namespace', 'ego_racecar')
         self.declare_parameter('ego_scan_topic', 'scan')
@@ -55,7 +61,7 @@ class GymBridge(Node):
         self.declare_parameter('scan_distance_to_base_link', 0.0)
         self.declare_parameter('scan_fov', 4.7)
         self.declare_parameter('scan_beams', 1080)
-        self.declare_parameter('map_path', '/home/skn/code/f1tenth_ws/src/f1tenth_gym_ros/maps/levine')
+        self.declare_parameter('map_path', default_map_path)
         self.declare_parameter('map_img_ext', '.png')
         self.declare_parameter('num_agent', 1)
         self.declare_parameter('sx', 0.0)
@@ -73,9 +79,15 @@ class GymBridge(Node):
         elif type(num_agents) != int:
             raise ValueError('num_agents should be an int.')
 
+        # resolve map path - if relative, prepend package share directory
+        map_path = self.get_parameter('map_path').value
+        if not os.path.isabs(map_path):
+            # Relative path - resolve it relative to package share directory
+            map_path = os.path.join(package_share_dir, 'maps', map_path)
+
         # env backend
         self.env = gym.make('f110_gym:f110-v0',
-                            map=self.get_parameter('map_path').value,
+                            map=map_path,
                             map_ext=self.get_parameter('map_img_ext').value,
                             num_agents=num_agents)
 

@@ -29,14 +29,16 @@ import yaml
 
 def generate_launch_description():
     ld = LaunchDescription()
-    config = os.path.join(
-        get_package_share_directory('f1tenth_gym_ros'),
-        'config',
-        'sim.yaml'
-        )
+    package_share_dir = get_package_share_directory('f1tenth_gym_ros')
+    config = os.path.join(package_share_dir, 'config', 'sim.yaml')
+    
     config_dict = yaml.safe_load(open(config, 'r'))
     has_opp = config_dict['bridge']['ros__parameters']['num_agent'] > 1
     teleop = config_dict['bridge']['ros__parameters']['kb_teleop']
+    
+    # Get map name from config (without extension or path)
+    map_name = 'levine'
+    map_yaml_file = os.path.join(package_share_dir, 'maps', map_name + '.yaml')
 
     bridge_node = Node(
         package='f1tenth_gym_ros',
@@ -55,10 +57,10 @@ def generate_launch_description():
     map_server_node = Node(
         package='nav2_map_server',
         executable='map_server',
-        parameters=[{'yaml_filename': config_dict['bridge']['ros__parameters']['map_path'] + '.yaml'},
-                    {'topic': 'map'},
+        name='map_server',
+        parameters=[{'yaml_filename': map_yaml_file},
+                    {'topic_name': 'map'},
                     {'frame_id': 'map'},
-                    {'output': 'screen'},
                     {'use_sim_time': True}]
     )
     nav_lifecycle_node = Node(

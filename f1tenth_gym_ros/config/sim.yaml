@@ -41,8 +41,9 @@ bridge:
     scan_fov: 4.7
     scan_beams: 1080
 
-    # map parameters
-    map_path: '/home/orin/f1tenth_ws/src/f1tenth_gym_ros/maps/square'
+    # map parameters (path will be resolved relative to package share directory)
+    # Use just the map name without extension, e.g., 'square', 'levine', 'Spielberg_map'
+    map_path: 'square'
     map_img_ext: '.png'
 
     # opponent parameters
