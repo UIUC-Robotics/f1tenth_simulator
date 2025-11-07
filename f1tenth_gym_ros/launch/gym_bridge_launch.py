@@ -39,6 +39,9 @@ def generate_launch_description():
     # Get map name from config (without extension or path)
     map_name = config_dict['bridge']['ros__parameters']['map_path']
     map_yaml_file = os.path.join(package_share_dir, 'maps', map_name + '.yaml')
+    
+    # Select RViz config based on number of agents
+    rviz_config_file = 'gym_bridge_dual.rviz' if has_opp else 'gym_bridge.rviz'
 
     bridge_node = Node(
         package='f1tenth_gym_ros',
@@ -52,7 +55,7 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         name='rviz',
-        arguments=['-d', os.path.join(get_package_share_directory('f1tenth_gym_ros'), 'launch', 'gym_bridge.rviz')]
+        arguments=['-d', os.path.join(package_share_dir, 'launch', rviz_config_file)]
     )
     map_server_node = Node(
         package='nav2_map_server',

@@ -171,13 +171,22 @@ bridge:
 
 ### Multi-Agent Racing
 
-To enable a second agent:
+![race](src/f1tenth_simulator/gym/docs/image.png)
+
+To enable a second agent (opponent car):
 
 ```yaml
 bridge:
   ros__parameters:
     num_agent: 2  # Change from 1 to 2
 ```
+
+**Visualization**: The launch file automatically switches to `gym_bridge_dual.rviz` when `num_agent: 2`, which displays:
+- Both cars' robot models
+- Both cars' laser scans (ego in rainbow colors, opponent in red)
+- All TF frames for both agents
+
+No need to rebuild - just change the config and relaunch!
 
 ## Python API Usage
 
@@ -219,6 +228,11 @@ The RViz window displays:
 
 ## Troubleshooting
 
+### Safely Ignore, will be patched in the future
+```
+[ERROR] [1762497570.014066382] [rviz2]: Vertex Program:rviz/glsl120/indexed_8bit_image.vert Fragment Program:rviz/glsl120/indexed_8bit_image.frag GLSL link result : 
+[rviz2-1] active samplers with a different type refer to the same texture image unit
+```
 ### Car Drives Through Walls
 
 This was a known issue that has been fixed in this version. The problem was:
