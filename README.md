@@ -171,7 +171,7 @@ bridge:
 
 ### Multi-Agent Racing
 
-![race](src/f1tenth_simulator/gym/docs/image.png)
+![race](gym/docs/image.png)
 
 To enable a second agent (opponent car):
 
