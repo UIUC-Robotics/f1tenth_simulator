@@ -50,7 +50,8 @@ def get_dt(bitmap, resolution):
             dt (numpy.ndarray, (n, m)): output distance matrix, where each cell has the corresponding distance (in meters) to the closest obstacle
     """
     dt = resolution * edt(bitmap)
-    return dt
+    # Ensure C-contiguous float64 for Numba compatibility with numpy 1.26
+    return np.ascontiguousarray(dt, dtype=np.float64)
 
 @njit(cache=True)
 def xy_2_rc(x, y, orig_x, orig_y, orig_c, orig_s, height, width, resolution):
@@ -100,10 +101,9 @@ def distance_transform(x, y, orig_x, orig_y, orig_c, orig_s, height, width, reso
             distance (float): corresponding shortest distance to obstacle in meters
     """
     r, c = xy_2_rc(x, y, orig_x, orig_y, orig_c, orig_s, height, width, resolution)
-    distance = dt[r, c]
-    if not isinstance(distance, float):
-        return np.inf
-    return distance
+    # Use flat indexing for better Numba/numpy 1.26 compatibility
+    idx = r * dt.shape[1] + c
+    return dt.flat[idx]
 
 @njit(cache=True)
 def trace_ray(x, y, theta_index, sines, cosines, eps, orig_x, orig_y, orig_c, orig_s, height, width, resolution, dt, max_range):
@@ -399,6 +399,12 @@ class ScanSimulator2D(object):
         # load map image
         map_img_path = os.path.splitext(map_path)[0] + map_ext
         self.map_img = np.array(Image.open(map_img_path).transpose(Image.FLIP_TOP_BOTTOM))
+        
+        # Convert RGBA/RGB to grayscale if needed
+        if len(self.map_img.shape) == 3:
+            # RGB/RGBA to grayscale conversion
+            self.map_img = np.dot(self.map_img[...,:3], [0.2989, 0.5870, 0.1140])
+        
         self.map_img = self.map_img.astype(np.float64)
 
         # grayscale -> binary

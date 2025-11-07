@@ -37,7 +37,7 @@ def generate_launch_description():
     teleop = config_dict['bridge']['ros__parameters']['kb_teleop']
     
     # Get map name from config (without extension or path)
-    map_name = 'levine'
+    map_name = config_dict['bridge']['ros__parameters']['map_path']
     map_yaml_file = os.path.join(package_share_dir, 'maps', map_name + '.yaml')
 
     bridge_node = Node(
@@ -59,8 +59,9 @@ def generate_launch_description():
         executable='map_server',
         name='map_server',
         parameters=[{'yaml_filename': map_yaml_file},
-                    {'topic_name': 'map'},
+                    {'topic': 'map'},
                     {'frame_id': 'map'},
+                    {'output': 'screen'},
                     {'use_sim_time': True}]
     )
     nav_lifecycle_node = Node(
