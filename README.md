@@ -38,7 +38,7 @@ The simulator uses OpenAI Gym 0.19.0 as its foundation:
 
 ```bash
 cd /path/to/your/workspace/src/f1tenth_simulator/gym
-pip install --user -e .
+pip install -e .
 ```
 
 This installs the base gym library with numpy 1.26 support.
@@ -49,7 +49,7 @@ Install the F1/10 specific gym environment:
 
 ```bash
 cd /path/to/your/workspace/src/f1tenth_simulator/f1tenth_gym
-pip install --user -e .
+pip install -e .
 ```
 
 This will automatically install dependencies:
