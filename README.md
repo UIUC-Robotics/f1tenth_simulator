@@ -2,6 +2,8 @@
 
 A high-performance F1/10 autonomous racing simulator with ROS2 integration, featuring realistic vehicle dynamics, laser scanning, and collision detection.
 
+![image](f1tenth_gym/docs/image.png)
+
 ## Features
 
 - **Realistic Physics**: Single-track dynamic model with RK4/Euler integration
@@ -66,6 +68,8 @@ This will automatically install dependencies:
 
 ```bash
 cd /path/to/your/workspace
+sudo apt update
+rosdep install --from-paths src/f1tenth_simulator --ignore-src -r -y
 colcon build --symlink-install
 
 # Source the workspace
@@ -255,10 +259,20 @@ pip install -e .
 ```
 
 ### NumPy Version Conflicts
+If `pip check` shows `f110-gym requires numpy<=1.22.0 but you have numpy 1.26.0`:
 
-This simulator requires NumPy 1.26. If you have conflicts:
 ```bash
-pip install --user --upgrade numpy==1.26.0
+# Reinstall f110-gym to update pip's metadata
+cd /path/to/workspace/src/f1tenth_simulator/f1tenth_gym
+pip uninstall -y f110_gym
+pip install --user -e .
+```
+
+This updates pip's database with the new numpy~=1.26.0 requirement.
+
+If you need to upgrade numpy:
+```bash
+pip install --upgrade numpy==1.26.0
 ```
 
 ## Technical Details
@@ -298,39 +312,3 @@ Uses instant Time-to-Collision (iTTC) algorithm:
 - `/ego_racecar/drive` (ackermann_msgs/AckermannDriveStamped): Drive commands
 - `/initialpose` (geometry_msgs/PoseWithCovarianceStamped): Reset ego pose
 - `/goal_pose` (geometry_msgs/PoseStamped): Reset opponent pose (if 2 agents)
-
-## Contributing
-
-This simulator is based on:
-- [F1TENTH Gym](https://github.com/f1tenth/f1tenth_gym) - Physics simulation
-- [F1TENTH Gym ROS](https://github.com/f1tenth/f1tenth_gym_ros) - ROS2 bridge
-- [OpenAI Gym 0.19.0](https://github.com/openai/gym) - Environment interface
-
-## License
-
-MIT License - See LICENSE files in individual packages
-
-## Citation
-
-```bibtex
-@inproceedings{okelly2020f1tenth,
-  title={F1TENTH: An Open-source Evaluation Environment for Continuous Control and Reinforcement Learning},
-  author={O'Kelly, Matthew and Zheng, Hongrui and Karthik, Dhruv and Mangharam, Rahul},
-  booktitle={NeurIPS 2019 Competition and Demonstration Track},
-  pages={77--89},
-  year={2020},
-  organization={PMLR}
-}
-```
-
-## Changelog
-
-### Latest Updates (NumPy 1.26 Migration)
-
-- ✅ Updated to NumPy 1.26.0
-- ✅ Fixed RGBA map loading (added RGB to grayscale conversion)
-- ✅ Fixed package installation and OpenAI Gym conflicts
-- ✅ Improved map path resolution using ROS2 package index
-- ✅ Fixed laser scan topic namespacing
-- ✅ Fixed map_server configuration
-- ✅ Ensured Numba JIT compatibility with NumPy 1.26
