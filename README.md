@@ -9,16 +9,16 @@ A high-performance F1/10 autonomous racing simulator with ROS2 integration, feat
 - **Realistic Physics**: Single-track dynamic model with RK4/Euler integration
 - **2D LiDAR Simulation**: Ray-casting based laser scan with 1080 beams
 - **Collision Detection**: Time-to-collision (TTC) based safety system
-- **ROS2 Integration**: Full support for ROS2 Humble with RViz visualization
+- **ROS2 Integration**: Full support for ROS2 Jazzy with RViz visualization
 - **Multiple Maps**: Includes Levine, Vegas, Berlin, Skirk, and custom map support
 - **Multi-Agent Support**: Up to 2 agents in the same environment
 - **NumPy 1.26 Compatible**: Updated for the latest scientific computing stack
 
 ## Prerequisites
 
-- **Ubuntu 22.04** (or compatible Linux distribution)
-- **Python 3.10+**
-- **ROS2 Humble** (for ROS integration)
+- **Ubuntu 24.04** (or compatible Linux distribution)
+- **Python 3.12+**
+- **ROS2 Jazzy** (for ROS integration)
 - **NumPy 1.26.0**
 - **OpenGL support** (for visualization)
 
@@ -27,12 +27,25 @@ A high-performance F1/10 autonomous racing simulator with ROS2 integration, feat
 ### 1. Install System Dependencies
 
 ```bash
-# ROS2 Humble (if not already installed)
-sudo apt install ros-humble-desktop ros-humble-ackermann-msgs ros-humble-nav2-map-server
+# ROS2 Jazzy (if not already installed)
+sudo apt install ros-jazzy-desktop ros-jazzy-ackermann-msgs ros-jazzy-nav2-map-server
 
 # Python dependencies
 sudo apt install python3-pip python3-dev
 ```
+
+### 2. Install Python Dependencies in a Virtual Env
+
+You can install all the python packages in the native ubuntu system, but I prefer to install packages in a virtual env so that they do not create version mismtach issues with other applications. 
+
+Let's create and activate a virtual env
+
+```bash
+mkdir ~/virtual
+python -m venv ~/virtual/f1tenth
+source ~/virtual/f1tenth/bin/activate
+```
+Now follow below instructions to install dependencies within the virtual env.
 
 ### 2. Install OpenAI Gym (Base Library)
 
@@ -59,7 +72,7 @@ This will automatically install dependencies:
 - `gym==0.19.0` (from step 2)
 - `Pillow>=9.0.1`
 - `scipy>=1.7.3`
-- `numba>=0.55.2`
+- `numba>=0.55.2,<=0.61`
 - `pyyaml>=5.3.1`
 - `pyglet<1.5`
 - `pyopengl`
@@ -82,6 +95,12 @@ source install/setup.bash
 
 ### Launch ROS2 Simulator with RViz
 
+#### Add your venv site-packages directly to the python path
+
+```bash
+export PYTHONPATH=/home/$USER/virtual/f1tenth/lib/python3.12/site-packages:$PYTHONPATH
+```
+Now launch the f1tenth simulation
 ```bash
 cd /path/to/your/workspace
 source install/setup.bash
